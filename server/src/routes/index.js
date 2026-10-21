@@ -1,0 +1,22 @@
+import { Router } from "express";
+import adminRoutes from "./adminRoutes.js";
+import authRoutes from "./authRoutes.js";
+import calendarRoutes from "./calendarRoutes.js";
+import employeeRoutes from "./employeeRoutes.js";
+import hrRoutes from "./hrRoutes.js";
+import leaveRoutes from "./leaveRoutes.js";
+import leaveTypeRoutes from "./leaveTypeRoutes.js";
+import notificationRoutes from "./notificationRoutes.js";
+import reportRoutes from "./reportRoutes.js";
+
+const router = Router();
+router.use("/auth", authRoutes);
+router.use("/employees", employeeRoutes);
+router.use("/leave-types", leaveTypeRoutes);
+router.use("/leaves", leaveRoutes);
+router.use("/hr", hrRoutes);
+router.use("/admin", adminRoutes);
+router.use("/notifications", notificationRoutes);
+router.use("/calendar", calendarRoutes);
+router.use("/reports", reportRoutes);
+export default router;

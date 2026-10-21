@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { font-feature-settings: "cv11", "ss01"; }
+  :focus-visible { @apply outline-none ring-2 ring-brand-500 ring-offset-1; }
+  input[type="checkbox"] { @apply h-4 w-4 rounded border-slate-300 text-brand-600; }
+  h1, h2, h3 { @apply tracking-tight; }
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  /* Numbers in tables and stat cards line up vertically. */
+  .num { font-variant-numeric: tabular-nums; }
+  .skeleton { @apply animate-pulse rounded bg-slate-200/70; }
+}

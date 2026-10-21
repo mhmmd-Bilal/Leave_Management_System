@@ -1,0 +1,781 @@
+{
+  "info": {
+    "name": "Leave Management System API",
+    "description": "Set EXPOSE_TOKEN_IN_BODY=true in .env for local Postman use so Login stores {{token}} automatically. Browser apps use the HTTP-only cookie + X-CSRF-Token instead.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "id",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": "admin@example.com"
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "leaveTypeId",
+      "value": ""
+    },
+    {
+      "key": "employeeId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register  [public]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Asha Kumar\",\n  \"email\": \"asha@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Passw0rd!x\",\n  \"employeeId\": \"EMP100\",\n  \"department\": \"Engineering\",\n  \"joiningDate\": \"2024-05-01\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Login  [public]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d.token) pm.collectionVariables.set('token', d.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout  [any]",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/logout"
+          }
+        },
+        {
+          "name": "Current user  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Change password  [any]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"old\",\n  \"newPassword\": \"NewPassw0rd!\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/change-password"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee",
+      "item": [
+        {
+          "name": "My profile  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/me"
+          }
+        },
+        {
+          "name": "Update my profile  [any]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Name\",\n  \"phone\": \"9876543211\"\n}"
+            },
+            "url": "{{baseUrl}}/api/employees/me"
+          }
+        },
+        {
+          "name": "My balances  [employee]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/me/balances?year=2026"
+          }
+        },
+        {
+          "name": "My leave history  [employee]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/me/leave-history?page=1&limit=10&status=pending&sortBy=startDate&order=asc"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leave types",
+      "item": [
+        {
+          "name": "List  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/leave-types"
+          }
+        },
+        {
+          "name": "Get  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/leave-types/{{id}}"
+          }
+        },
+        {
+          "name": "Create  [admin]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Study Leave\",\n  \"code\": \"STUDY\",\n  \"yearlyLimit\": 6,\n  \"rules\": {\n    \"allowHalfDay\": true,\n    \"maxDays\": 3\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/leave-types"
+          }
+        },
+        {
+          "name": "Update  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"yearlyLimit\": 8\n}"
+            },
+            "url": "{{baseUrl}}/api/leave-types/{{id}}"
+          }
+        },
+        {
+          "name": "Activate / deactivate  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/leave-types/{{id}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leaves",
+      "item": [
+        {
+          "name": "Apply (JSON)  [employee]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leaveTypeId\": \"{{leaveTypeId}}\",\n  \"startDate\": \"2026-11-02\",\n  \"endDate\": \"2026-11-04\",\n  \"days\": 3,\n  \"reason\": \"Family function\",\n  \"isHalfDay\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/leaves"
+          }
+        },
+        {
+          "name": "Calculate days (preview)  [employee]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/leaves/calculate?leaveTypeId={{leaveTypeId}}&startDate=2026-11-02&endDate=2026-11-04"
+          }
+        },
+        {
+          "name": "My requests  [employee]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/leaves/my?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Request details  [owner, hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/leaves/{{id}}"
+          }
+        },
+        {
+          "name": "Cancel pending request  [employee]",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/leaves/{{id}}/cancel"
+          }
+        },
+        {
+          "name": "Signed link for medical document (Cloudinary)  [owner, hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/leaves/{{id}}/document"
+          }
+        }
+      ]
+    },
+    {
+      "name": "HR",
+      "item": [
+        {
+          "name": "Dashboard  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/dashboard"
+          }
+        },
+        {
+          "name": "Employees  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/employees?status=active&search=asha"
+          }
+        },
+        {
+          "name": "Employee details  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/employees/{{id}}"
+          }
+        },
+        {
+          "name": "Pending registrations  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/registrations/pending"
+          }
+        },
+        {
+          "name": "Rejected registrations  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/registrations/rejected"
+          }
+        },
+        {
+          "name": "Approve registration  [hr, admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/employees/{{id}}/approve"
+          }
+        },
+        {
+          "name": "Reject registration  [hr, admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Unknown employee\"\n}"
+            },
+            "url": "{{baseUrl}}/api/hr/employees/{{id}}/reject"
+          }
+        },
+        {
+          "name": "All leave requests  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/leaves?status=pending&department=Engineering&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Leave request details  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/leaves/{{id}}"
+          }
+        },
+        {
+          "name": "Approve leave  [hr, admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/leaves/{{id}}/approve"
+          }
+        },
+        {
+          "name": "Reject leave  [hr, admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Project deadline\"\n}"
+            },
+            "url": "{{baseUrl}}/api/hr/leaves/{{id}}/reject"
+          }
+        },
+        {
+          "name": "Employee balances  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/balances/{{employeeId}}?year=2026"
+          }
+        },
+        {
+          "name": "Adjust balance  [hr, admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leaveTypeId\": \"{{leaveTypeId}}\",\n  \"year\": 2026,\n  \"delta\": 2,\n  \"reason\": \"Carry forward\"\n}"
+            },
+            "url": "{{baseUrl}}/api/hr/balances/{{employeeId}}/adjust"
+          }
+        },
+        {
+          "name": "Balance adjustment history  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/balances/{{employeeId}}/adjustments"
+          }
+        },
+        {
+          "name": "Audit logs (HR view)  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/hr/audit-logs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Employees  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/employees?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Employee details  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/employees/{{id}}"
+          }
+        },
+        {
+          "name": "Update employee  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"department\": \"Finance\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/employees/{{id}}"
+          }
+        },
+        {
+          "name": "Employee status  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"disabled\",\n  \"reason\": \"Long absence\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/employees/{{id}}/status"
+          }
+        },
+        {
+          "name": "Create HR  [admin]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Harini HR\",\n  \"email\": \"harini@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Passw0rd!x\",\n  \"employeeId\": \"HR009\",\n  \"department\": \"Human Resources\",\n  \"joiningDate\": \"2023-01-01\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/hr"
+          }
+        },
+        {
+          "name": "List HR  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/hr"
+          }
+        },
+        {
+          "name": "HR details  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/hr/{{id}}"
+          }
+        },
+        {
+          "name": "Update HR  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"department\": \"People Ops\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/hr/{{id}}"
+          }
+        },
+        {
+          "name": "HR status  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"disabled\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/hr/{{id}}/status"
+          }
+        },
+        {
+          "name": "List admins  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/admins"
+          }
+        },
+        {
+          "name": "Admin status  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"disabled\"\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/admins/{{id}}/status"
+          }
+        },
+        {
+          "name": "Get settings  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/settings"
+          }
+        },
+        {
+          "name": "Update settings  [admin]",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"workingDays\": [\n    1,\n    2,\n    3,\n    4,\n    5\n  ],\n  \"holidays\": [\n    {\n      \"date\": \"2026-12-25\",\n      \"name\": \"Christmas\"\n    }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/settings"
+          }
+        },
+        {
+          "name": "Initialize balances  [admin]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"year\": 2027,\n  \"updateExisting\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/admin/balances/initialize"
+          }
+        },
+        {
+          "name": "Audit logs  [admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/audit-logs?action=leave.approved&page=1&limit=20"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications?isRead=false"
+          }
+        },
+        {
+          "name": "Unread count  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/unread-count"
+          }
+        },
+        {
+          "name": "Mark read  [any]",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/{{id}}/read"
+          }
+        },
+        {
+          "name": "Mark all read  [any]",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/read-all"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Calendar",
+      "item": [
+        {
+          "name": "Approved leave calendar  [any]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/calendar/leaves?month=11&year=2026"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Monthly  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/monthly?year=2026"
+          }
+        },
+        {
+          "name": "Annual  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/annual?year=2026"
+          }
+        },
+        {
+          "name": "Employee-wise  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/employees?year=2026"
+          }
+        },
+        {
+          "name": "Department-wise  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/departments?year=2026"
+          }
+        },
+        {
+          "name": "Leave-type-wise  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/leave-types?year=2026"
+          }
+        },
+        {
+          "name": "Status summary  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/status-summary?year=2026"
+          }
+        },
+        {
+          "name": "Balances  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/balances?year=2026"
+          }
+        },
+        {
+          "name": "Export CSV  [hr, admin]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/export/csv?report=employees&year=2026"
+          }
+        }
+      ]
+    }
+  ]
+}
